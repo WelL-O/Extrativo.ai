@@ -6,16 +6,12 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/supabase-front/types'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-
-// Durante o build, as variáveis podem não estar disponíveis
-// Usamos valores placeholder que serão substituídos no runtime
-const isBuildTime = typeof window === 'undefined' && !supabaseUrl
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.placeholder'
 
 export const supabase = createClient<Database>(
-  isBuildTime ? 'https://placeholder.supabase.co' : supabaseUrl,
-  isBuildTime ? 'placeholder-key' : supabaseAnonKey,
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       persistSession: true,
