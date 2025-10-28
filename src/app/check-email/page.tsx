@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n'
 import { AuthHeader } from '@/components/auth-header'
 import { BackgroundBlobs } from '@/components/background-blobs'
+import { AuthImage } from '@/components/auth-image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
@@ -103,13 +104,7 @@ export default function CheckEmailPage() {
                   </div>
                 </div>
               </div>
-              <div className="relative hidden bg-muted md:block">
-                <img
-                  src="/placeholder.svg"
-                  alt="Image"
-                  className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-                />
-              </div>
+              <AuthImage />
             </CardContent>
           </Card>
           <div className="mt-6 text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">

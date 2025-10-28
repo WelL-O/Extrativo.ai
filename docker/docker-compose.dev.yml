@@ -20,9 +20,9 @@ services:
       - /app/.next
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_SUPABASE_URL=https://igcgirkbtehuljsbnphk.supabase.co
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnY2dpcmtidGVodWxqc2JucGhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5OTA3MTksImV4cCI6MjA3NjU2NjcxOX0.xI4PB0SdzqWxM64jqXrkh5Hr0yKDHdnFqdFEhd-4iO0
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
       - WATCHPACK_POLLING=true
     command: sh -c "npm install && npm run dev"
     networks:

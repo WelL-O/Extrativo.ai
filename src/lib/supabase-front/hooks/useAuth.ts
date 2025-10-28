@@ -49,21 +49,39 @@ export function useAuth() {
     // Pega sessão inicial
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
+        console.error('[useAuth] Erro ao obter sessão:', error)
+        // Se houver erro ao obter sessão, limpa qualquer token corrompido
+        supabase.auth.signOut().catch(() => {})
         setAuthState(prev => ({ ...prev, error, loading: false }))
         return
       }
 
       if (session?.user) {
+        console.log('[useAuth] Sessão encontrada, carregando perfil...')
         loadUserProfile(session.user.id, session)
       } else {
+        console.log('[useAuth] Nenhuma sessão ativa')
         setAuthState(prev => ({ ...prev, loading: false }))
       }
+    }).catch((err) => {
+      console.error('[useAuth] Erro crítico ao inicializar:', err)
+      setAuthState(prev => ({ ...prev, loading: false }))
     })
 
     // Observa mudanças de autenticação
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[useAuth] Auth state changed:', event)
+
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('[useAuth] Token refreshed')
+      }
+
+      if (event === 'SIGNED_OUT') {
+        console.log('[useAuth] User signed out')
+      }
+
       if (session?.user) {
         loadUserProfile(session.user.id, session)
       } else {
@@ -114,20 +132,31 @@ export function useAuth() {
   // Sign up com email/password (envia link de confirmação)
   const signUp = async ({ email, password, fullName }: SignUpData) => {
     try {
+      console.log('[useAuth] Iniciando cadastro...')
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: fullName,
+      const { data, error } = await Promise.race([
+        supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              full_name: fullName,
+            },
           },
-        },
-      })
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Cadastro timeout após 30s')), 30000)
+        ),
+      ]) as any
 
-      if (error) throw error
+      if (error) {
+        console.error('[useAuth] Erro no cadastro:', error)
+        throw error
+      }
+
+      console.log('[useAuth] Cadastro bem-sucedido!', data)
 
       // NOTA: A criação do perfil será feita via trigger no Supabase
       // ou você precisa configurar RLS policies antes
@@ -147,6 +176,7 @@ export function useAuth() {
       setAuthState(prev => ({ ...prev, loading: false }))
       return { data, error: null }
     } catch (error) {
+      console.error('[useAuth] Erro capturado no cadastro:', error)
       const authError = error as AuthError
       setAuthState(prev => ({ ...prev, loading: false, error: authError }))
       return { data: null, error: authError }
@@ -181,18 +211,29 @@ export function useAuth() {
   // Sign in com email/password
   const signIn = async ({ email, password }: SignInData) => {
     try {
+      console.log('[useAuth] Iniciando login...')
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const { data, error } = await Promise.race([
+        supabase.auth.signInWithPassword({
+          email,
+          password,
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Login timeout após 30s')), 30000)
+        ),
+      ]) as any
 
-      if (error) throw error
+      if (error) {
+        console.error('[useAuth] Erro no login:', error)
+        throw error
+      }
 
+      console.log('[useAuth] Login bem-sucedido!')
       setAuthState(prev => ({ ...prev, loading: false }))
       return { data, error: null }
     } catch (error) {
+      console.error('[useAuth] Erro capturado:', error)
       const authError = error as AuthError
       setAuthState(prev => ({ ...prev, loading: false, error: authError }))
       return { data: null, error: authError }

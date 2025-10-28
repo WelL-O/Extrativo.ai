@@ -336,3 +336,48 @@ export function downloadCSV(data: any[], filename: string, headers?: string[]) {
   link.click()
   document.body.removeChild(link)
 }
+
+/**
+ * Limpa completamente o cache de autenticação do Supabase
+ * Útil para resolver problemas com tokens corrompidos ou expirados
+ */
+export async function clearAuthCache(): Promise<void> {
+  try {
+    console.log('[clearAuthCache] Limpando cache de autenticação...')
+
+    // Remove tokens do localStorage
+    if (typeof window !== 'undefined') {
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && (key.includes('supabase') || key.includes('extrativo-auth'))) {
+          keysToRemove.push(key)
+        }
+      }
+
+      keysToRemove.forEach((key) => {
+        console.log('[clearAuthCache] Removendo:', key)
+        localStorage.removeItem(key)
+      })
+    }
+
+    // Faz sign out no Supabase
+    await supabase.auth.signOut()
+
+    console.log('[clearAuthCache] Cache limpo com sucesso!')
+  } catch (error) {
+    console.error('[clearAuthCache] Erro ao limpar cache:', error)
+  }
+}
+
+/**
+ * Verifica se há problemas com o token de autenticação
+ */
+export async function checkAuthHealth(): Promise<boolean> {
+  try {
+    const { error } = await supabase.auth.getSession()
+    return !error
+  } catch {
+    return false
+  }
+}

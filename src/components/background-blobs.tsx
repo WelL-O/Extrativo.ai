@@ -24,9 +24,7 @@ export function BackgroundBlobs() {
       // Top-right blob
       position: "top-[-20%] right-[-10%]",
       size: "w-[700px] h-[700px]",
-      gradient: isDark
-        ? "from-gray-500/60 via-gray-400/50 to-gray-600/40"
-        : "from-gray-200/70 via-gray-100/60 to-white/50",
+      gradient: "from-gray-500/60 via-gray-400/50 to-gray-600/40",
       animation: {
         scale: [1, 1.3, 1],
         rotate: [0, 15, 0],
@@ -45,9 +43,7 @@ export function BackgroundBlobs() {
       // Bottom-left blob
       position: "bottom-[-20%] left-[-10%]",
       size: "w-[650px] h-[650px]",
-      gradient: isDark
-        ? "from-gray-600/55 via-gray-500/45 to-gray-700/35"
-        : "from-gray-100/65 via-white/55 to-gray-200/45",
+      gradient: "from-gray-600/55 via-gray-500/45 to-gray-700/35",
       animation: {
         scale: [1, 1.25, 1],
         rotate: [0, -12, 0],
@@ -67,9 +63,7 @@ export function BackgroundBlobs() {
       // Center-right blob
       position: "top-[35%] right-[0%]",
       size: "w-[550px] h-[550px]",
-      gradient: isDark
-        ? "from-gray-700/45 via-gray-600/50 to-gray-500/40"
-        : "from-white/60 via-gray-50/50 to-gray-100/45",
+      gradient: "from-gray-700/45 via-gray-600/50 to-gray-500/40",
       animation: {
         scale: [1, 1.2, 1],
         rotate: [0, 10, 0],
