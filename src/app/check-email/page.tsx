@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n'
 import { AuthHeader } from '@/components/auth-header'
+import { BackgroundBlobs } from '@/components/background-blobs'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
@@ -26,7 +27,7 @@ export default function CheckEmailPage() {
 
   if (!mounted) {
     return (
-      <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+      <div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-sm">
           <Card>
             <CardContent className="p-6">
@@ -42,8 +43,9 @@ export default function CheckEmailPage() {
 
   return (
     <>
+      <BackgroundBlobs />
       <AuthHeader />
-      <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+      <div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-sm md:max-w-3xl">
           <Card className="overflow-hidden">
             <CardContent className="grid p-0 md:grid-cols-2">
