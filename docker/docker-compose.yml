@@ -9,8 +9,8 @@ services:
   # Frontend Application
   extrativo-frontend:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: extrativo-frontend
     restart: unless-stopped
     ports:

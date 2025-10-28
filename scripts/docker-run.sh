@@ -34,6 +34,8 @@ print_info() {
 }
 
 check_env() {
+    # Navigate to project root
+    cd "$(dirname "$0")/.."
     if [ ! -f .env ]; then
         print_error "Arquivo .env não encontrado!"
         print_info "Copie o arquivo .env.example para .env e configure as variáveis"
@@ -61,38 +63,38 @@ show_menu() {
 dev_mode() {
     print_info "Iniciando em modo desenvolvimento..."
     check_env
-    docker-compose -f docker-compose.dev.yml up
+    docker-compose -f docker/docker-compose.dev.yml up
 }
 
 prod_mode() {
     print_info "Iniciando em modo produção..."
     check_env
-    docker-compose up -d
+    docker-compose -f docker/docker-compose.yml up -d
     print_success "Aplicação rodando em http://localhost:3000"
 }
 
 build_prod() {
     print_info "Construindo imagem de produção..."
     check_env
-    docker-compose build --no-cache
+    docker-compose -f docker/docker-compose.yml build --no-cache
     print_success "Build concluído!"
 }
 
 stop_all() {
     print_info "Parando containers..."
-    docker-compose down
-    docker-compose -f docker-compose.dev.yml down
+    docker-compose -f docker/docker-compose.yml down
+    docker-compose -f docker/docker-compose.dev.yml down
     print_success "Containers parados!"
 }
 
 view_logs() {
-    docker-compose logs -f
+    docker-compose -f docker/docker-compose.yml logs -f
 }
 
 clean_all() {
     print_info "Removendo containers, volumes e imagens..."
-    docker-compose down -v --rmi all
-    docker-compose -f docker-compose.dev.yml down -v --rmi all
+    docker-compose -f docker/docker-compose.yml down -v --rmi all
+    docker-compose -f docker/docker-compose.dev.yml down -v --rmi all
     print_success "Limpeza concluída!"
 }
 
@@ -109,7 +111,7 @@ health_check() {
 
 shell_access() {
     print_info "Acessando shell do container..."
-    docker-compose exec extrativo-frontend sh
+    docker-compose -f docker/docker-compose.yml exec extrativo-frontend sh
 }
 
 # Main loop

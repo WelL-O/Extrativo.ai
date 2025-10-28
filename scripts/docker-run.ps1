@@ -26,6 +26,8 @@ function Print-Info {
 }
 
 function Check-Env {
+    # Navigate to project root
+    Set-Location (Join-Path $PSScriptRoot "..")
     if (-not (Test-Path .env)) {
         Print-Error "Arquivo .env não encontrado!"
         Print-Info "Copie o arquivo .env.example para .env e configure as variáveis"
@@ -51,38 +53,38 @@ function Show-Menu {
 function Start-DevMode {
     Print-Info "Iniciando em modo desenvolvimento..."
     Check-Env
-    docker-compose -f docker-compose.dev.yml up
+    docker-compose -f docker/docker-compose.dev.yml up
 }
 
 function Start-ProdMode {
     Print-Info "Iniciando em modo produção..."
     Check-Env
-    docker-compose up -d
+    docker-compose -f docker/docker-compose.yml up -d
     Print-Success "Aplicação rodando em http://localhost:3000"
 }
 
 function Build-Prod {
     Print-Info "Construindo imagem de produção..."
     Check-Env
-    docker-compose build --no-cache
+    docker-compose -f docker/docker-compose.yml build --no-cache
     Print-Success "Build concluído!"
 }
 
 function Stop-All {
     Print-Info "Parando containers..."
-    docker-compose down
-    docker-compose -f docker-compose.dev.yml down
+    docker-compose -f docker/docker-compose.yml down
+    docker-compose -f docker/docker-compose.dev.yml down
     Print-Success "Containers parados!"
 }
 
 function View-Logs {
-    docker-compose logs -f
+    docker-compose -f docker/docker-compose.yml logs -f
 }
 
 function Clean-All {
     Print-Info "Removendo containers, volumes e imagens..."
-    docker-compose down -v --rmi all
-    docker-compose -f docker-compose.dev.yml down -v --rmi all
+    docker-compose -f docker/docker-compose.yml down -v --rmi all
+    docker-compose -f docker/docker-compose.dev.yml down -v --rmi all
     Print-Success "Limpeza concluída!"
 }
 
@@ -103,7 +105,7 @@ function Test-Health {
 
 function Open-Shell {
     Print-Info "Acessando shell do container..."
-    docker-compose exec extrativo-frontend sh
+    docker-compose -f docker/docker-compose.yml exec extrativo-frontend sh
 }
 
 # Main loop
