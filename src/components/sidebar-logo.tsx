@@ -28,7 +28,7 @@ export function SidebarLogo() {
     <img
       src={isDark ? '/logos/logo-light.png' : '/logos/logo-dark.png'}
       alt="Extrativo.AI"
-      className="h-8 w-auto"
+      className="h-6 w-auto"
     />
   )
 }

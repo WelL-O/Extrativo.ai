@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useState, useEffect } from 'react'
+import { Globe, Check } from 'lucide-react'
 
 export function LanguageSwitcher() {
   const { currentLanguageInfo, changeLanguage, availableLanguages } = useLanguage()
@@ -24,10 +25,18 @@ export function LanguageSwitcher() {
     setMounted(true)
   }, [])
 
+  // Obtém código curto do idioma (ex: "PT", "EN", "ES")
+  const getShortCode = (code: Language) => {
+    if (code === 'pt-BR') return 'PT'
+    if (code === 'en') return 'EN'
+    if (code === 'es') return 'ES'
+    return code.toUpperCase().substring(0, 2)
+  }
+
   if (!mounted) {
     return (
       <Button variant="ghost" size="sm">
-        <span className="mr-2">🌐</span>
+        <Globe className="mr-2 h-4 w-4" />
         <span>...</span>
       </Button>
     )
@@ -37,25 +46,28 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm">
-          <span className="mr-2">{currentLanguageInfo.flag}</span>
-          <span>{currentLanguageInfo.nativeName}</span>
+          <Globe className="mr-1 h-4 w-4" />
+          <span className="font-medium">{getShortCode(currentLanguageInfo.code)}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {availableLanguages.map((lang) => (
-          <DropdownMenuItem
-            key={lang.code}
-            onClick={() => changeLanguage(lang.code as Language)}
-            className={
-              lang.code === currentLanguageInfo.code
-                ? 'bg-accent font-semibold'
-                : ''
-            }
-          >
-            <span className="mr-2">{lang.flag}</span>
-            <span>{lang.nativeName}</span>
-          </DropdownMenuItem>
-        ))}
+      <DropdownMenuContent align="end" className="w-40">
+        {availableLanguages.map((lang) => {
+          const isSelected = lang.code === currentLanguageInfo.code
+          return (
+            <DropdownMenuItem
+              key={lang.code}
+              onClick={() => changeLanguage(lang.code as Language)}
+              className={
+                isSelected
+                  ? 'bg-red-600 text-white hover:bg-red-700 hover:text-white font-medium'
+                  : 'hover:bg-accent'
+              }
+            >
+              <span className="flex-1">{lang.nativeName}</span>
+              {isSelected && <Check className="ml-2 h-4 w-4" />}
+            </DropdownMenuItem>
+          )
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   )
