@@ -1,0 +1,29 @@
+{
+  "analytics": "Análises",
+  "loading_map": "Carregando mapa...",
+
+  "success_rate": "Taxa de Sucesso",
+  "last_30_days": "Últimos 30 dias",
+  "total_leads": "Total de Leads",
+  "from_extractions": "De {{count}} extrações",
+  "avg_per_extraction": "Média por Extração",
+  "leads_per_search": "Leads por busca",
+  "best_project": "Melhor Projeto",
+  "most_productive": "Mais produtivo",
+  "not_available": "N/A",
+
+  "evolution_title": "Evolução de Extrações e Leads",
+  "evolution_description": "Últimos 30 dias - Tendências de uso",
+  "extractions_label": "Extrações",
+  "leads_label": "Leads",
+  "top_categories_title": "Top 10 Categorias",
+  "top_categories_description": "Distribuição de leads por tipo de negócio",
+  "daily_success_title": "Taxa de Sucesso Diária",
+  "daily_success_description": "Performance das extrações por dia",
+  "project_performance_title": "Performance por Projeto",
+  "project_performance_description": "Comparação de resultados entre projetos",
+  "extractions_and_leads": "{{extractions}} extrações · {{leads}} leads",
+  "success": "sucesso",
+  "geographic_distribution_title": "Distribuição Geográfica",
+  "geographic_distribution_description": "Concentração de leads extraídos por localização"
+}

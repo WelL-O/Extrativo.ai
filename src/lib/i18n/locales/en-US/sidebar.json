@@ -20,5 +20,14 @@
   "feedback": "Feedback",
   "design_engineering": "Design Engineering",
   "sales_marketing": "Sales & Marketing",
-  "travel": "Travel"
+  "travel": "Travel",
+  "dashboard": "Dashboard",
+  "overview": "Overview",
+  "analytics": "Analytics",
+  "extractions": "Extractions",
+  "new_extraction": "New Extraction",
+  "projects": "Projects",
+  "subscription": "Subscription",
+  "profile": "Profile",
+  "user": "User"
 }

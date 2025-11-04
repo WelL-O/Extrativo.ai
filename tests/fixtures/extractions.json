@@ -1,0 +1,45 @@
+{
+  "sampleExtractions": [
+    {
+      "name": "Restaurantes em São Paulo",
+      "query": "restaurantes em São Paulo",
+      "keywords": ["restaurantes", "são paulo"],
+      "language": "pt-BR",
+      "depth": 10
+    },
+    {
+      "name": "Hotéis no Rio de Janeiro",
+      "query": "hotéis no rio de janeiro",
+      "keywords": ["hotéis", "rio de janeiro"],
+      "language": "pt-BR",
+      "depth": 20
+    },
+    {
+      "name": "Cafés em Porto Alegre",
+      "query": "cafés em porto alegre",
+      "keywords": ["cafés", "porto alegre"],
+      "language": "pt-BR",
+      "depth": 15
+    }
+  ],
+  "sampleProjects": [
+    {
+      "name": "Vendas",
+      "description": "Projeto para prospecção de vendas",
+      "color": "#3b82f6",
+      "icon": "briefcase"
+    },
+    {
+      "name": "Marketing",
+      "description": "Campanhas de marketing digital",
+      "color": "#8b5cf6",
+      "icon": "megaphone"
+    },
+    {
+      "name": "Pesquisa",
+      "description": "Pesquisa de mercado",
+      "color": "#10b981",
+      "icon": "search"
+    }
+  ]
+}

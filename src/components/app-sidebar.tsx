@@ -2,20 +2,17 @@
 
 import * as React from "react"
 import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
+  LayoutDashboard,
+  Download,
+  FolderKanban,
+  CreditCard,
+  User,
+  Settings,
   LifeBuoy,
-  Map,
-  PieChart,
   Send,
-  Settings2,
-  SquareTerminal,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import { SidebarLogo } from "@/components/sidebar-logo"
@@ -28,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Skeleton } from "@/components/ui/skeleton"
 import { PaperPlaneIcon } from "@radix-ui/react-icons"
 import { useCurrentUser } from "@/lib/supabase-front"
 import { useTranslation } from "@/lib/i18n"
@@ -38,127 +36,66 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Dados do usuário vindos do Supabase
   const userData = {
-    name: profile?.full_name || user?.email?.split('@')[0] || 'Usuário',
+    name: profile?.full_name || user?.email?.split('@')[0] || t('user'),
     email: user?.email || '',
     avatar: profile?.avatar_url || '',
   }
 
-  // Dados da navegação com i18n
+  // Dados da navegação - Extrativo
   const data = {
     navMain: [
       {
-        title: t('playground'),
-        url: "#",
-        icon: SquareTerminal,
+        title: t('dashboard'),
+        url: "/dashboard",
+        icon: LayoutDashboard,
         isActive: true,
         items: [
           {
+            title: t('overview'),
+            url: "/dashboard",
+          },
+          {
+            title: t('analytics'),
+            url: "/dashboard/analytics",
+          },
+        ],
+      },
+      {
+        title: t('extractions'),
+        url: "/dashboard/extractions",
+        icon: Download,
+        items: [
+          {
+            title: t('new_extraction'),
+            url: "/dashboard/extractions/new",
+          },
+          {
             title: t('history'),
-            url: "#",
-          },
-          {
-            title: t('starred'),
-            url: "#",
-          },
-          {
-            title: t('settings'),
-            url: "#",
+            url: "/dashboard/extractions",
           },
         ],
       },
       {
-        title: t('models'),
-        url: "#",
-        icon: Bot,
-        items: [
-          {
-            title: t('genesis'),
-            url: "#",
-          },
-          {
-            title: t('explorer'),
-            url: "#",
-          },
-          {
-            title: t('quantum'),
-            url: "#",
-          },
-        ],
-      },
-      {
-        title: t('documentation'),
-        url: "#",
-        icon: BookOpen,
-        items: [
-          {
-            title: t('introduction'),
-            url: "#",
-          },
-          {
-            title: t('get_started'),
-            url: "#",
-          },
-          {
-            title: t('tutorials'),
-            url: "#",
-          },
-          {
-            title: t('changelog'),
-            url: "#",
-          },
-        ],
-      },
-      {
-        title: t('settings'),
-        url: "#",
-        icon: Settings2,
-        items: [
-          {
-            title: t('general'),
-            url: "#",
-          },
-          {
-            title: t('team'),
-            url: "#",
-          },
-          {
-            title: t('billing'),
-            url: "#",
-          },
-          {
-            title: t('limits'),
-            url: "#",
-          },
-        ],
+        title: t('projects'),
+        url: "/dashboard/projects",
+        icon: FolderKanban,
       },
     ],
     navSecondary: [
       {
-        title: t('support'),
-        url: "#",
-        icon: LifeBuoy,
+        title: t('subscription'),
+        url: "/dashboard/subscription",
+        icon: CreditCard,
       },
       {
-        title: t('feedback'),
-        url: "#",
-        icon: Send,
-      },
-    ],
-    projects: [
-      {
-        name: t('design_engineering'),
-        url: "#",
-        icon: Frame,
+        title: t('profile'),
+        url: "/dashboard/profile",
+        icon: User,
       },
       {
-        name: t('sales_marketing'),
-        url: "#",
-        icon: PieChart,
-      },
-      {
-        name: t('travel'),
-        url: "#",
-        icon: Map,
+        title: t('settings'),
+        url: "/dashboard/settings",
+        icon: Settings,
       },
     ],
   }
@@ -166,9 +103,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   if (loading) {
     return (
       <Sidebar variant="inset" {...props}>
-        <div className="flex items-center justify-center h-full">
-          <div className="text-muted-foreground">Carregando...</div>
-        </div>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild>
+                <a href="#" className="flex items-center justify-center">
+                  <SidebarLogo />
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent className="px-4 space-y-4">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </SidebarContent>
+        <SidebarFooter className="px-4 pb-4">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-[120px]" />
+              <Skeleton className="h-3 w-[160px]" />
+            </div>
+          </div>
+        </SidebarFooter>
       </Sidebar>
     )
   }
@@ -188,7 +149,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

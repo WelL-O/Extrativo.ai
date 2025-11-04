@@ -14,6 +14,7 @@ import extractionsPtBR from '../locales/pt-BR/extractions.json'
 import profilePtBR from '../locales/pt-BR/profile.json'
 import sidebarPtBR from '../locales/pt-BR/sidebar.json'
 import dashboardPtBR from '../locales/pt-BR/dashboard.json'
+import analyticsPtBR from '../locales/pt-BR/analytics.json'
 
 import commonEn from '../locales/en/common.json'
 import authEn from '../locales/en/auth.json'
@@ -21,6 +22,7 @@ import extractionsEn from '../locales/en/extractions.json'
 import profileEn from '../locales/en/profile.json'
 import sidebarEn from '../locales/en-US/sidebar.json'
 import dashboardEn from '../locales/en-US/dashboard.json'
+import analyticsEn from '../locales/en/analytics.json'
 
 import commonEs from '../locales/es/common.json'
 import authEs from '../locales/es/auth.json'
@@ -28,6 +30,7 @@ import extractionsEs from '../locales/es/extractions.json'
 import profileEs from '../locales/es/profile.json'
 import sidebarEs from '../locales/es-ES/sidebar.json'
 import dashboardEs from '../locales/es-ES/dashboard.json'
+import analyticsEs from '../locales/es/analytics.json'
 
 // Recursos de tradução organizados por idioma e namespace
 const resources = {
@@ -38,6 +41,7 @@ const resources = {
     profile: profilePtBR,
     sidebar: sidebarPtBR,
     dashboard: dashboardPtBR,
+    analytics: analyticsPtBR,
   },
   en: {
     common: commonEn,
@@ -46,6 +50,7 @@ const resources = {
     profile: profileEn,
     sidebar: sidebarEn,
     dashboard: dashboardEn,
+    analytics: analyticsEn,
   },
   es: {
     common: commonEs,
@@ -54,6 +59,7 @@ const resources = {
     profile: profileEs,
     sidebar: sidebarEs,
     dashboard: dashboardEs,
+    analytics: analyticsEs,
   },
 }
 
@@ -65,7 +71,7 @@ i18n
     resources,
     fallbackLng: 'pt-BR', // Idioma padrão
     defaultNS: 'common', // Namespace padrão
-    ns: ['common', 'auth', 'extractions', 'profile', 'sidebar', 'dashboard'], // Namespaces disponíveis
+    ns: ['common', 'auth', 'extractions', 'profile', 'sidebar', 'dashboard', 'analytics'], // Namespaces disponíveis
 
     detection: {
       // Ordem de detecção: localStorage > querystring > cookie > navegador
