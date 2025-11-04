@@ -135,12 +135,14 @@ export function useAuth() {
       console.log('[useAuth] Iniciando cadastro...')
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+
       const { data, error } = await Promise.race([
         supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${appUrl}/auth/callback`,
             data: {
               full_name: fullName,
             },
@@ -188,12 +190,14 @@ export function useAuth() {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+
       // Envia magic link para o email
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${appUrl}/auth/callback`,
         },
       })
 
@@ -356,8 +360,10 @@ export function useAuth() {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${appUrl}/reset-password`,
       })
 
       if (error) throw error
