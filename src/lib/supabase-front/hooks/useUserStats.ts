@@ -3,7 +3,7 @@
  * Hook para buscar estatísticas do usuário
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase-front/client/supabase'
 
 interface UserStats {
@@ -26,6 +26,8 @@ export function useUserStats(userId?: string): UseUserStatsReturn {
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+  const lastUserIdRef = useRef<string | undefined>(undefined)
+  const isLoadingRef = useRef(false)
 
   const loadStats = async () => {
     if (!userId) {
@@ -33,9 +35,17 @@ export function useUserStats(userId?: string): UseUserStatsReturn {
       return
     }
 
+    // Evita carregamento duplicado se já estiver carregando
+    if (isLoadingRef.current) {
+      console.log('[useUserStats] Já está carregando, ignorando chamada duplicada')
+      return
+    }
+
     try {
+      isLoadingRef.current = true
       setLoading(true)
       setError(null)
+      console.log('[useUserStats] Carregando estatísticas para:', userId)
 
       const { data, error: rpcError } = await supabase.rpc('get_user_stats', {
         p_user_id: userId,
@@ -57,16 +67,25 @@ export function useUserStats(userId?: string): UseUserStatsReturn {
           plan: 'free',
         })
       }
+      console.log('[useUserStats] Estatísticas carregadas com sucesso')
     } catch (err) {
       setError(err as Error)
-      console.error('Erro ao carregar estatísticas:', err)
+      console.error('[useUserStats] Erro ao carregar estatísticas:', err)
     } finally {
       setLoading(false)
+      isLoadingRef.current = false
     }
   }
 
   useEffect(() => {
-    loadStats()
+    // Só recarrega se o userId realmente mudou
+    if (userId !== lastUserIdRef.current) {
+      console.log('[useUserStats] userId mudou de', lastUserIdRef.current, 'para', userId)
+      lastUserIdRef.current = userId
+      loadStats()
+    } else if (userId) {
+      console.log('[useUserStats] userId não mudou, pulando recarga')
+    }
   }, [userId])
 
   return {

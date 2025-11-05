@@ -3,7 +3,7 @@
  * Hook para gerenciar extrações com realtime e suporte a download
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase-front/client/supabase'
 import type { Database } from '@/lib/supabase-front/types'
 import type { RealtimeChannel } from '@supabase/supabase-js'
@@ -41,11 +41,21 @@ export function useExtractions(options: UseExtractionsOptions = {}) {
   })
 
   const [realtimeChannel, setRealtimeChannel] = useState<RealtimeChannel | null>(null)
+  const lastUserIdRef = useRef<string | undefined>(undefined)
+  const isLoadingRef = useRef(false)
 
   // Carrega extrações
   const loadExtractions = async () => {
+    // Evita carregamento duplicado se já estiver carregando
+    if (isLoadingRef.current) {
+      console.log('[useExtractions] Já está carregando, ignorando chamada duplicada')
+      return
+    }
+
     try {
+      isLoadingRef.current = true
       setState(prev => ({ ...prev, loading: true, error: null }))
+      console.log('[useExtractions] Carregando extrações para:', userId)
 
       let query = supabase
         .from('extractions')
@@ -60,17 +70,21 @@ export function useExtractions(options: UseExtractionsOptions = {}) {
 
       if (error) throw error
 
+      console.log('[useExtractions] Extrações carregadas com sucesso:', data?.length || 0)
       setState({
         extractions: data || [],
         loading: false,
         error: null,
       })
     } catch (error) {
+      console.error('[useExtractions] Erro ao carregar extrações:', error)
       setState(prev => ({
         ...prev,
         loading: false,
         error: error as Error,
       }))
+    } finally {
+      isLoadingRef.current = false
     }
   }
 
@@ -231,7 +245,17 @@ export function useExtractions(options: UseExtractionsOptions = {}) {
 
   // Effect: Carregamento inicial
   useEffect(() => {
-    loadExtractions()
+    // Só recarrega se o userId realmente mudou
+    if (userId !== lastUserIdRef.current) {
+      console.log('[useExtractions] userId mudou de', lastUserIdRef.current, 'para', userId)
+      lastUserIdRef.current = userId
+      loadExtractions()
+    } else if (userId) {
+      console.log('[useExtractions] userId não mudou, pulando recarga')
+    } else {
+      // Se não tem userId, limpa o loading
+      setState(prev => ({ ...prev, loading: false }))
+    }
   }, [userId])
 
   // Effect: Auto-refresh

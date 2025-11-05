@@ -3,7 +3,7 @@
  * Hook para buscar dados analíticos e métricas
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase-front/client/supabase'
 
 interface TimelineData {
@@ -59,6 +59,9 @@ export function useAnalytics(options: UseAnalyticsOptions = {}) {
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+  const lastUserIdRef = useRef<string | undefined>(undefined)
+  const lastDaysRef = useRef<number | undefined>(undefined)
+  const isLoadingRef = useRef(false)
 
   const loadAnalytics = async () => {
     if (!userId) {
@@ -66,9 +69,17 @@ export function useAnalytics(options: UseAnalyticsOptions = {}) {
       return
     }
 
+    // Evita carregamento duplicado se já estiver carregando
+    if (isLoadingRef.current) {
+      console.log('[useAnalytics] Já está carregando, ignorando chamada duplicada')
+      return
+    }
+
     try {
+      isLoadingRef.current = true
       setLoading(true)
       setError(null)
+      console.log('[useAnalytics] Carregando analytics para:', userId, 'dias:', days)
 
       // Data de início (X dias atrás)
       const startDate = new Date()
@@ -184,16 +195,26 @@ export function useAnalytics(options: UseAnalyticsOptions = {}) {
         byProject: projectPerformance,
         locations,
       })
+      console.log('[useAnalytics] Analytics carregados com sucesso')
     } catch (err) {
       setError(err as Error)
-      console.error('Erro ao carregar analytics:', err)
+      console.error('[useAnalytics] Erro ao carregar analytics:', err)
     } finally {
       setLoading(false)
+      isLoadingRef.current = false
     }
   }
 
   useEffect(() => {
-    loadAnalytics()
+    // Só recarrega se userId ou days realmente mudaram
+    if (userId !== lastUserIdRef.current || days !== lastDaysRef.current) {
+      console.log('[useAnalytics] Parâmetros mudaram - userId:', lastUserIdRef.current, '→', userId, 'days:', lastDaysRef.current, '→', days)
+      lastUserIdRef.current = userId
+      lastDaysRef.current = days
+      loadAnalytics()
+    } else if (userId) {
+      console.log('[useAnalytics] Parâmetros não mudaram, pulando recarga')
+    }
   }, [userId, days])
 
   return {

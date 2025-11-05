@@ -3,7 +3,7 @@
  * Hook customizado para autenticação com Supabase incluindo suporte a OTP
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { supabase } from '@/lib/supabase-front/client/supabase'
 import type { User, AuthError, Session } from '@supabase/supabase-js'
 import type { Database } from '@/lib/supabase-front/types'
@@ -44,29 +44,14 @@ export function useAuth() {
     error: null,
   })
 
+  // Refs para controle de carregamento
+  const isLoadingProfileRef = useRef(false)
+  const loadedUserIdRef = useRef<string | null>(null)
+
   // Inicializa sessão e observa mudanças
   useEffect(() => {
-    // Pega sessão inicial
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('[useAuth] Erro ao obter sessão:', error)
-        // Se houver erro ao obter sessão, limpa qualquer token corrompido
-        supabase.auth.signOut().catch(() => {})
-        setAuthState(prev => ({ ...prev, error, loading: false }))
-        return
-      }
-
-      if (session?.user) {
-        console.log('[useAuth] Sessão encontrada, carregando perfil...')
-        loadUserProfile(session.user.id, session)
-      } else {
-        console.log('[useAuth] Nenhuma sessão ativa')
-        setAuthState(prev => ({ ...prev, loading: false }))
-      }
-    }).catch((err) => {
-      console.error('[useAuth] Erro crítico ao inicializar:', err)
-      setAuthState(prev => ({ ...prev, loading: false }))
-    })
+    // Flag para evitar carregamento duplicado durante a inicialização
+    let isInitialLoad = true
 
     // Observa mudanças de autenticação
     const {
@@ -83,7 +68,12 @@ export function useAuth() {
       }
 
       if (session?.user) {
-        loadUserProfile(session.user.id, session)
+        // Carrega perfil apenas se não for um evento duplicado
+        if (isInitialLoad || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          console.log('[useAuth] Carregando perfil do usuário...')
+          loadUserProfile(session.user.id, session)
+          isInitialLoad = false
+        }
       } else {
         setAuthState({
           user: null,
@@ -102,7 +92,22 @@ export function useAuth() {
 
   // Carrega perfil do usuário
   const loadUserProfile = async (userId: string, session: Session) => {
+    // Evita carregamento duplicado
+    if (isLoadingProfileRef.current) {
+      console.log('[useAuth] Já está carregando perfil, ignorando chamada duplicada')
+      return
+    }
+
+    // Se já carregou este usuário, não recarrega
+    if (loadedUserIdRef.current === userId) {
+      console.log('[useAuth] Perfil já carregado para este userId, ignorando recarga')
+      return
+    }
+
     try {
+      isLoadingProfileRef.current = true
+      console.log('[useAuth] Buscando perfil do usuário:', userId)
+
       const { data: profile, error } = await supabase
         .from('users')
         .select('*')
@@ -111,6 +116,8 @@ export function useAuth() {
 
       if (error) throw error
 
+      console.log('[useAuth] Perfil carregado com sucesso')
+      loadedUserIdRef.current = userId
       setAuthState({
         user: session.user,
         profile,
@@ -119,6 +126,7 @@ export function useAuth() {
         error: null,
       })
     } catch (error) {
+      console.error('[useAuth] Erro ao carregar perfil:', error)
       setAuthState(prev => ({
         ...prev,
         user: session.user,
@@ -126,6 +134,8 @@ export function useAuth() {
         loading: false,
         error: error as AuthError,
       }))
+    } finally {
+      isLoadingProfileRef.current = false
     }
   }
 
@@ -339,6 +349,10 @@ export function useAuth() {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
 
+      // Limpa refs de controle
+      loadedUserIdRef.current = null
+      isLoadingProfileRef.current = false
+
       setAuthState({
         user: null,
         profile: null,
@@ -397,8 +411,12 @@ export function useAuth() {
     }
   }
 
+  // Memoiza user para evitar mudanças desnecessárias
+  const memoizedUser = useMemo(() => authState.user, [authState.user?.id])
+
   return {
     ...authState,
+    user: memoizedUser,
     signUp,
     signUpWithOtp,
     signIn,
