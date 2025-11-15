@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase-front/client/supabase'
 import type { User, AuthError, Session } from '@supabase/supabase-js'
 import type { Database } from '@/lib/supabase-front/types'
 
-type UserProfile = Database['public']['Tables']['users']['Row']
+type UserProfile = Database['public']['Tables']['profiles']['Row']
 
 interface AuthState {
   user: User | null
@@ -108,13 +108,41 @@ export function useAuth() {
       isLoadingProfileRef.current = true
       console.log('[useAuth] Buscando perfil do usuário:', userId)
 
-      const { data: profile, error } = await supabase
+      let { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single()
 
-      if (error) throw error
+      // Se o perfil não existe, cria automaticamente
+      if (error && error.code === 'PGRST116') {
+        console.log('[useAuth] Perfil não encontrado, criando automaticamente...')
+
+        const { error: createError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userId,
+            email: session.user.email!,
+            full_name: session.user.user_metadata?.full_name || null,
+          })
+
+        if (createError) {
+          console.error('[useAuth] Erro ao criar perfil:', createError)
+          throw createError
+        }
+
+        // Tenta carregar novamente após criar
+        const { data: newProfile, error: retryError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single()
+
+        if (retryError) throw retryError
+        profile = newProfile
+      } else if (error) {
+        throw error
+      }
 
       console.log('[useAuth] Perfil carregado com sucesso')
       loadedUserIdRef.current = userId
@@ -226,6 +254,8 @@ export function useAuth() {
   const signIn = async ({ email, password }: SignInData) => {
     try {
       console.log('[useAuth] Iniciando login...')
+      console.log('[useAuth] Email:', email)
+      console.log('[useAuth] Password length:', password.length)
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
       const { data, error } = await Promise.race([
@@ -240,10 +270,17 @@ export function useAuth() {
 
       if (error) {
         console.error('[useAuth] Erro no login:', error)
+        console.error('[useAuth] Erro detalhado:', {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+          name: error.name,
+        })
         throw error
       }
 
       console.log('[useAuth] Login bem-sucedido!')
+      console.log('[useAuth] User data:', data.user)
       setAuthState(prev => ({ ...prev, loading: false }))
       return { data, error: null }
     } catch (error) {

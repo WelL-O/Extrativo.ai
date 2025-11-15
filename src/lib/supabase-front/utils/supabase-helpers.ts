@@ -8,7 +8,7 @@ import type { Database } from '@/lib/supabase-front/types'
 
 type Extraction = Database['public']['Tables']['extractions']['Row']
 type ExtractionResult = Database['public']['Tables']['extraction_results']['Row']
-type UserProfile = Database['public']['Tables']['users']['Row']
+type UserProfile = Database['public']['Tables']['profiles']['Row']
 type ApiKey = Database['public']['Tables']['api_keys']['Row']
 
 /**

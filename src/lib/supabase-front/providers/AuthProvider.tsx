@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/supabase-front/hooks/useAuth'
 import type { User, AuthError, Session } from '@supabase/supabase-js'
 import type { Database } from '@/lib/supabase-front/types'
 
-type UserProfile = Database['public']['Tables']['users']['Row']
+type UserProfile = Database['public']['Tables']['profiles']['Row']
 
 interface AuthContextValue {
   user: User | null
