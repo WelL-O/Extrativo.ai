@@ -109,7 +109,7 @@ export function useAuth() {
       console.log('[useAuth] Buscando perfil do usuário:', userId)
 
       const { data: profile, error } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', userId)
         .single()
@@ -175,7 +175,7 @@ export function useAuth() {
       // Comentado temporariamente para permitir signup sem erro de RLS
       /*
       if (data.user) {
-        const { error: profileError } = await supabase.from('users').insert({
+        const { error: profileError } = await supabase.from('profiles').insert({
           id: data.user.id,
           email: data.user.email!,
           full_name: fullName || null,
@@ -294,14 +294,14 @@ export function useAuth() {
       // Se tem usuário criado, verifica se precisa criar perfil
       if (data.user) {
         const { error: profileError } = await supabase
-          .from('users')
+          .from('profiles')
           .select('id')
           .eq('id', data.user.id)
           .single()
 
         // Se não existe perfil, cria
         if (profileError) {
-          await supabase.from('users').insert({
+          await supabase.from('profiles').insert({
             id: data.user.id,
             email: data.user.email!,
           })

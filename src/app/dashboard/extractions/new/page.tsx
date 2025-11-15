@@ -92,13 +92,6 @@ export default function NewExtractionPage() {
 
         {/* Main Content */}
         <div className="flex flex-1 flex-col gap-6 p-6">
-          <div>
-            <h1 className="text-3xl font-bold">Nova Extração</h1>
-            <p className="text-muted-foreground mt-2">
-              Configure e inicie uma nova extração de leads do Google Maps
-            </p>
-          </div>
-
           {layout === 'wizard' ? (
             <ExtractionWizard onSubmit={handleSubmit} onCancel={handleCancel} />
           ) : (
