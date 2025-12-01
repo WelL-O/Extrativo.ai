@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+// Optimized: Import only what we need from framer-motion
+import { motion, type MotionProps } from "framer-motion";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 

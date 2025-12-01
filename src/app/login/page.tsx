@@ -1,6 +1,12 @@
+import dynamic from 'next/dynamic'
 import { LoginForm } from "@/components/login-form"
 import { AuthHeader } from "@/components/auth-header"
-import { BackgroundBlobs } from "@/components/background-blobs"
+
+// Lazy load BackgroundBlobs (decorative, not critical)
+const BackgroundBlobs = dynamic(
+  () => import("@/components/background-blobs").then((mod) => ({ default: mod.BackgroundBlobs })),
+  { ssr: false }
+)
 
 export default function LoginPage() {
   return (

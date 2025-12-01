@@ -54,6 +54,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.0.6",
     "@playwright/test": "^1.56.1",
     "@types/node": "^20",
     "@types/react": "^18",

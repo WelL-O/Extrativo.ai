@@ -21,11 +21,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useCurrentUser } from "@/lib/supabase-front/hooks"
 import { useAnalytics } from "@/lib/supabase-front/hooks/useAnalytics"
 import { TrendingUp, Target, Award, BarChart3 } from "lucide-react"
+// Optimized: Import specific components from recharts
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import dynamic from 'next/dynamic'
 import { AnalyticsSkeleton } from "@/components/skeletons/AnalyticsSkeleton"
 
-// Lazy load mapa para evitar problemas de SSR
+// Lazy load mapa para evitar problemas de SSR (Leaflet is heavy)
 const LeafletMap = dynamic(() => import('@/components/analytics/LeafletMap'), {
   ssr: false,
   loading: () => <div className="h-[400px] bg-muted rounded-lg flex items-center justify-center">Carregando mapa...</div>
