@@ -7,8 +7,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase-front/client/supabase'
 import type { Database } from '@/lib/supabase-front/types'
 
-type UserProfile = Database['public']['Tables']['users']['Row']
-type UserUpdate = Database['public']['Tables']['users']['Update']
+type UserProfile = Database['public']['Tables']['profiles']['Row']
+type UserUpdate = Database['public']['Tables']['profiles']['Update']
 type ApiKey = Database['public']['Tables']['api_keys']['Row']
 type ApiKeyInsert = Database['public']['Tables']['api_keys']['Insert']
 
@@ -40,7 +40,7 @@ export function useUser(options: UseUserOptions = {}) {
       setState(prev => ({ ...prev, loading: true, error: null }))
 
       const { data, error } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', id)
         .single()
@@ -97,7 +97,7 @@ export function useUser(options: UseUserOptions = {}) {
 
     try {
       const { data, error } = await supabase
-        .from('users')
+        .from('profiles')
         .update(updates)
         .eq('id', state.profile.id)
         .select()
@@ -224,7 +224,7 @@ export function useUser(options: UseUserOptions = {}) {
 
       // Atualiza perfil
       const { data, error } = await supabase
-        .from('users')
+        .from('profiles')
         .update({ avatar_url: publicUrl })
         .eq('id', state.profile.id)
         .select()
@@ -258,7 +258,7 @@ export function useUser(options: UseUserOptions = {}) {
 
       // Atualiza perfil
       const { data, error } = await supabase
-        .from('users')
+        .from('profiles')
         .update({ avatar_url: null })
         .eq('id', state.profile.id)
         .select()
